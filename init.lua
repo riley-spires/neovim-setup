@@ -1,0 +1,172 @@
+local vim = vim
+
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
+
+require("config.lazy")
+
+
+vim.opt.relativenumber = true
+vim.opt.undofile = true
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
+
+vim.g.material_style = "palenight"
+vim.cmd("colorscheme material")
+
+vim.g.compile_mode = {
+	baleia_setup = true,
+}
+
+require("nvim-treesitter.configs").setup({
+	auto_install = true,
+	highlight = {
+		enable = true,
+		additional_vim_regex_highlighting = false
+	},
+	indent = { enable = true },
+})
+
+require('material').setup {
+	contrast = {
+		terminal = true,
+	},
+}
+
+vim.keymap.set('n', "<M-n>", "<cmd>nohlsearch<CR>")
+vim.keymap.set('n', "<leader>ng", "<cmd>Neogit<CR>")
+
+require("telescope").setup()
+local builtin = require('telescope.builtin')
+
+vim.keymap.set('n', '<leader>p', builtin.git_files)
+vim.keymap.set('n', '<leader>pf', builtin.find_files)
+vim.keymap.set('n', '<leader>pg', builtin.live_grep)
+
+
+local harpoon = require("harpoon")
+harpoon.setup()
+
+vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+vim.keymap.set("n", "<leader>e", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+vim.keymap.set("n", "<leader>j", function() harpoon:list():next() end)
+vim.keymap.set("n", "<leader>k", function() harpoon:list():prev() end)
+
+for i = 1, 9, 1 do
+	vim.keymap.set("n", string.format("<leader>%d", i), function() harpoon:list():select(i) end)
+end
+
+
+vim.keymap.set("n", "<leader>0", function() harpoon:list():select(10) end)
+
+
+local cmp = require("cmp")
+
+local has_words_before = function()
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+local feedkey = function(key, mode)
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+end
+
+cmp.setup {
+	snippet = {
+		expand = function(args)
+			vim.fn["vsnip#anonymous"](args.body)
+		end,
+	},
+	window = {
+
+	},
+	mapping = cmp.mapping.preset.insert {
+		['<tab>'] = cmp.mapping.confirm({ select = true }),
+		["<M-j>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_next_item()
+			elseif vim.fn["vsnip#available"](1) == 1 then
+				feedkey("<Plug>(vsnip-expand-or-jump)", "")
+			elseif has_words_before() then
+				cmp.complete()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<M-k>"] = cmp.mapping(function()
+			if cmp.visible() then
+				cmp.select_prev_item()
+			elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+				feedkey("<Plug>(vsnip-jump-prev)", "")
+			end
+		end, { "i", "s" }),
+	},
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+		{ name = "vsnip" },
+	}, {
+		{ name = "buffer" },
+	})
+}
+
+cmp.setup.cmdline({ "/", "?" }, {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = {
+		{ name = "buffer" }
+	}
+})
+
+cmp.setup.cmdline(":", {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = cmp.config.sources({
+		{ name = "path" },
+	}, {
+		{ name = "cmdline" }
+	}),
+	matching = { disallow_symbol_nonprefix_matching = false }
+})
+
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+local function on_attach(_, bufnr)
+	local opts = { noremap = true, silent = true }
+	vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+	vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+	vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>rf", "<cmd>lua vim.lsp.buf.format()<CR>", opts)
+
+	vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
+	vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
+end
+
+
+require("mason").setup()
+require("mason-lspconfig").setup {}
+require("mason-lspconfig").setup_handlers {
+	function(server_name)
+		require("lspconfig")[server_name].setup {
+			capabilities = capabilities,
+			on_attach = on_attach,
+		}
+	end,
+}
+
+-- manual setup of clangd due to arm64 clangd not supported by mason
+require("lspconfig").clangd.setup {
+	capabilities = capabilities,
+	on_attach = on_attach
+}
+
+require("autoclose").setup()
+require("neogit").setup()
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking text",
+	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank()
+	end,
+})
