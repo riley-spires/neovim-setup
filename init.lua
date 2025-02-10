@@ -12,6 +12,7 @@ vim.opt.undofile = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
+vim.opt.colorcolumn = "90"
 
 vim.g.material_style = "palenight"
 vim.cmd("colorscheme material")
