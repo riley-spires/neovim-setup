@@ -170,3 +170,37 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank()
 	end,
 })
+
+-- setup of ts and lsp for c3 https://c3-lang.org
+
+require("lspconfig.configs").c3 = {
+    default_config = {
+        cmd = { "c3lsp" },
+        filetypes = { "c3" },
+        root_dir = require("lspconfig").util.root_pattern(""),
+        settings = {},
+    }
+}
+
+require("lspconfig").c3.setup {
+    capabilities = capabilities,
+    on_attach = on_attach
+}
+
+vim.filetype.add({
+  extension = {
+    c3 = "c3",
+    c3i = "c3",
+    c3t = "c3",
+  },
+})
+
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.c3 = {
+  install_info = {
+    url = "https://github.com/c3lang/tree-sitter-c3",
+    files = {"src/parser.c", "src/scanner.c"},
+    branch = "main",
+  },
+}
+
