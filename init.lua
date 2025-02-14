@@ -38,6 +38,7 @@ require('material').setup {
 
 vim.keymap.set('n', "<M-n>", "<cmd>nohlsearch<CR>")
 vim.keymap.set('n', "<leader>ng", "<cmd>Neogit<CR>")
+vim.keymap.set('n', "<leader>x", "<cmd>Ex<CR>")
 
 require("telescope").setup()
 local builtin = require('telescope.builtin')
