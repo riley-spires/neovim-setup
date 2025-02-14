@@ -43,9 +43,9 @@ vim.keymap.set('n', "<leader>x", "<cmd>Ex<CR>")
 require("telescope").setup()
 local builtin = require('telescope.builtin')
 
-vim.keymap.set('n', '<leader>p', builtin.git_files)
-vim.keymap.set('n', '<leader>pf', builtin.find_files)
-vim.keymap.set('n', '<leader>pg', builtin.live_grep)
+vim.keymap.set('n', '<leader>gf', builtin.git_files)
+vim.keymap.set('n', '<leader>f', builtin.find_files)
+vim.keymap.set('n', '<leader>g', builtin.live_grep)
 
 
 local harpoon = require("harpoon")
@@ -194,6 +194,7 @@ vim.filetype.add({
     c3 = "c3",
     c3i = "c3",
     c3t = "c3",
+    c3l = "c3",
   },
 })
 
