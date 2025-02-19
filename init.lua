@@ -47,6 +47,10 @@ vim.keymap.set('n', '<leader>gf', builtin.git_files)
 vim.keymap.set('n', '<leader>f', builtin.find_files)
 vim.keymap.set('n', '<leader>g', builtin.live_grep)
 
+vim.keymap.set('n', '<leader>cm', "<cmd>Compile<CR>")
+vim.keymap.set('n', '<leader>rc', "<cmd>Recompile<CR>")
+vim.keymap.set('n', '<leader>ne', "<cmd>NextError<CR>")
+
 
 local harpoon = require("harpoon")
 harpoon.setup()
