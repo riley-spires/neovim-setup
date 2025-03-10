@@ -15,6 +15,7 @@ vim.opt.expandtab = true
 vim.opt.colorcolumn = "90"
 
 vim.g.material_style = "palenight"
+vim.g.zig_fmt_autosave = 0
 vim.cmd("colorscheme material")
 
 vim.g.compile_mode = {
@@ -44,13 +45,17 @@ require("telescope").setup()
 local builtin = require('telescope.builtin')
 
 vim.keymap.set('n', '<leader>gf', builtin.git_files)
-vim.keymap.set('n', '<leader>f', builtin.find_files)
-vim.keymap.set('n', '<leader>g', builtin.live_grep)
+vim.keymap.set('n', '<leader>ff', builtin.find_files)
+vim.keymap.set('n', '<leader>gr', builtin.live_grep)
 
 vim.keymap.set('n', '<leader>cm', "<cmd>Compile<CR>")
 vim.keymap.set('n', '<leader>rc', "<cmd>Recompile<CR>")
 vim.keymap.set('n', '<leader>ne', "<cmd>NextError<CR>")
 
+local neogen = require("neogen")
+
+vim.keymap.set('n', '<leader>nf', function() neogen.generate({ type = "func" }) end)
+vim.keymap.set('n', '<leader>nc', function() neogen.generate({ type = "class" }) end)
 
 local harpoon = require("harpoon")
 harpoon.setup()
