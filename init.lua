@@ -113,11 +113,12 @@ cmp.setup {
 				feedkey("<Plug>(vsnip-jump-prev)", "")
 			end
 		end, { "i", "s" }),
+        ["<M-a>"] = cmp.mapping.abort(),
 	},
 	sources = cmp.config.sources({
+        { name = "supermaven" },
 		{ name = "nvim_lsp" },
 		{ name = "vsnip" },
-        { name = "supermaven" },
 	}, {
 		{ name = "buffer" },
 	}) 
