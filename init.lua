@@ -6,6 +6,8 @@ vim.g.maplocalleader = ' '
 
 require("config.lazy")
 
+local themes = {"material", "gruber-darker"}
+local theme = 2
 
 vim.opt.relativenumber = true
 vim.opt.undofile = true
@@ -16,7 +18,7 @@ vim.opt.colorcolumn = "90"
 
 vim.g.material_style = "palenight"
 vim.g.zig_fmt_autosave = 0
-vim.cmd("colorscheme material")
+vim.cmd("colorscheme " .. themes[theme])
 
 vim.g.compile_mode = {
 	baleia_setup = true,
