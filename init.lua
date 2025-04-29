@@ -173,6 +173,12 @@ require("lspconfig").clangd.setup {
 	on_attach = on_attach
 }
 
+-- manual setup of ols due to arm64 clangd not supported by mason
+require("lspconfig").ols.setup {
+    capabilities = capabilities,
+    on_attach = on_attach
+}
+
 require("autoclose").setup()
 require("neogit").setup()
 
