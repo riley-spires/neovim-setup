@@ -24,6 +24,11 @@ vim.g.compile_mode = {
 	baleia_setup = true,
 }
 
+-- Needed for vim 0.11.X to see errors properly
+vim.diagnostic.config({
+    virtual_text = true,
+})
+
 require("nvim-treesitter.configs").setup({
 	auto_install = true,
 	highlight = {
@@ -73,7 +78,6 @@ end
 
 
 vim.keymap.set("n", "<leader>0", function() harpoon:list():select(10) end)
-
 
 local cmp = require("cmp")
 
