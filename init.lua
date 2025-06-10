@@ -31,11 +31,13 @@ vim.diagnostic.config({
 
 require("nvim-treesitter.configs").setup({
 	auto_install = true,
+	indent = { enable = true },
+    textobjects = { enable = true },
+    blade = { injection_regex = "php" },
 	highlight = {
 		enable = true,
 		additional_vim_regex_highlighting = false
 	},
-	indent = { enable = true },
 })
 
 require('material').setup {
@@ -227,5 +229,33 @@ parser_config.c3 = {
     files = {"src/parser.c", "src/scanner.c"},
     branch = "main",
   },
+}
+
+-- setup of ts and lsp for blade files 
+
+require("lspconfig").phpactor.setup {
+  filetypes = { "php", "blade" },
+  on_attach = on_attach,
+  capabilities = capabilities
+}
+
+require("lspconfig").laravel_ls.setup {
+    capabilities = capabilities,
+    on_attach = on_attach
+}
+
+vim.filetype.add({
+    extension = {
+        blade = "blade.php"
+    }
+})
+
+parser_config.blade = {
+  install_info = {
+    url = "https://github.com/EmranMR/tree-sitter-blade",
+    files = {"src/parser.c"},
+    branch = "main",
+  },
+  filetype = "blade"
 }
 
